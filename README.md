@@ -149,12 +149,12 @@ banking-modern-datastack/
 
 ---
 
+
 **Author**: Utkarsh Reddy Nathala
 
-**Linkedin**: https://www.linkedin.com/in/utkarsh-reddy-nathala-b5b56728a/
+**Linkedin**: https://www.linkedin.com/in/utkarshreddynathala/
 
-**Contact**:utkarshnathala@gmail.com, 8977011784
-
+**Contact**: utkarshnathala@gmail.com , 8977011784
 
 
 
