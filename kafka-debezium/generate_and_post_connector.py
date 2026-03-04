@@ -42,8 +42,8 @@ response = requests.post(url, headers=headers, data=json.dumps(connector_config)
 # Debug/Output
 # -----------------------------
 if response.status_code == 201:
-    print("✅ Connector created successfully!")
+    print("Connector created successfully!")
 elif response.status_code == 409:
-    print("⚠️ Connector already exists.")
+    print("Connector already exists.")
 else:
-    print(f"❌ Failed to create connector ({response.status_code}): {response.text}")
+    print(f"Failed to create connector ({response.status_code}): {response.text}")
