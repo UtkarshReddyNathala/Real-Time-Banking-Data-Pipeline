@@ -13,9 +13,9 @@ load_dotenv()
 # -----------------------------
 # Project configuration (safe to hardcode here)
 # -----------------------------
-NUM_CUSTOMERS = 10
-ACCOUNTS_PER_CUSTOMER = 2
-NUM_TRANSACTIONS = 50
+NUM_CUSTOMERS = 2000
+ACCOUNTS_PER_CUSTOMER = 5
+NUM_TRANSACTIONS = 10
 MAX_TXN_AMOUNT = 1000.00
 CURRENCY = "USD"
 
