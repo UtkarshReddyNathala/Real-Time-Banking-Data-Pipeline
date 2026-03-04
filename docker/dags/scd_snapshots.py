@@ -34,7 +34,7 @@ with DAG(
             "cd /opt/airflow/banking_dbt && "
             "dbt snapshot --profiles-dir /home/airflow/.dbt"
         ),
-        execution_timeout=timedelta(minutes=30),  # Increased timeout for large datasets
+        execution_timeout=timedelta(minutes=60),  # Increased for 100k+ records
     )
 
     # -----------------------------
@@ -46,11 +46,10 @@ with DAG(
             "cd /opt/airflow/banking_dbt && "
             "dbt run --select marts --profiles-dir /home/airflow/.dbt"
         ),
-        execution_timeout=timedelta(minutes=45),  # Longer timeout for processing 100k+ records
+        execution_timeout=timedelta(minutes=90),  # Longer timeout for large data
     )
 
     # -----------------------------
     # Task dependencies
-    # Snapshots should finish before marts run
     # -----------------------------
     dbt_snapshot >> dbt_run_marts
