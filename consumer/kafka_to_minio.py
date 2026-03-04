@@ -51,7 +51,7 @@ def write_to_minio(table_name, records):
     print(f'✅ Uploaded {len(records)} records to s3://{bucket}/{s3_key}')
 
 # Batch consume
-batch_size = 50
+batch_size = 5000
 buffer = {
     'banking_server.public.customers': [],
     'banking_server.public.accounts': [],
