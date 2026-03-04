@@ -14,9 +14,9 @@
 
 ## Project Overview
 
-• Built a real-time **streaming data pipeline** using **Change Data Capture (CDC)** with **Apache Kafka**, **Kafka Connect**, and **Debezium** to capture live changes from **PostgreSQL** and stream incremental data into an **S3-compatible data lake (MinIO)**.
-
-• Developed a **Snowflake** cloud data warehouse following **Medallion architecture (Bronze → Silver → Gold)**, implementing **dbt** staging models, fact and dimension tables in a **star schema data model**, **incremental transformations**, and Slowly Changing Dimensions **(SCD Type-2) for historical trackin**g.
+• Built a real-time **streaming data pipeline** using **Change Data Capture (CDC)** with **Apache Kafka**, **Kafka Connect**, and **Debezium** to capture live changes from **PostgreSQL** and stream incremental data into an **S3-compatible data lake (MinIO)**.  
+ 
+• Developed a **Snowflake** cloud data warehouse following **Medallion architecture (Bronze → Silver → Gold)**, implementing **dbt** staging models, fact and dimension tables in a **star schema data model**, **incremental transformations**, and Slowly Changing Dimensions **(SCD Type-2) for historical tracking**.
 
 • Orchestrated end-to-end data workflows using **Apache Airflow** and containerized services with **Docker** to ensure reliable and reproducible pipeline execution.
 
@@ -96,7 +96,7 @@ banking-modern-datastack/
 ##  Step-by-Step Implementation  
 
 ### **1. Data Simulation**  
-- Generated synthetic banking data (**customers, accounts, transactions**) using **Faker**.  
+-  Generated synthetic banking data (**~2,000 customers, ~10,000 accounts, ~100,000 transactions**) using **Faker**. 
 - Inserted data into **PostgreSQL (OLTP)** so the system behaves like a real transactional database (**ACID, constraints**).  
 - Controlled generation via `config.yaml`.  
 
@@ -109,9 +109,9 @@ banking-modern-datastack/
 ---
 
 ### **3. Airflow Orchestration**  
-- Built DAGs to:  
-  - Ingest **MinIO data → Snowflake (Bronze)**.  
-  - Schedule **snapshots & incremental loads**.  
+ - Built DAGs to:
+  - Ingest **MinIO data → Snowflake (Bronze)** using **parallel uploads** and increased batch sizes to efficiently handle ~100k+ records.
+  - Schedule **snapshots & incremental loads** with **extended execution timeouts** for large datasets.
 
 ---
 
@@ -124,8 +124,9 @@ banking-modern-datastack/
 ### **5. DBT Transformations**  
 - **Staging models** → cleaned source data.  
 - **Dimension & fact models** → built marts.  
-- **Snapshots** → tracked history of accounts & customers.  
-
+- **Snapshots** → tracked history of accounts & customers with SCD Type-2, optimized for ~100k records.  
+- **Incremental models** → configured with correct `unique_key` and batch handling for large-scale datasets.
+  
 ---
 
 ### **6. CI/CD with GitHub Actions**  
