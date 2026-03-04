@@ -30,13 +30,12 @@ SNOWFLAKE_SCHEMA = os.getenv("SNOWFLAKE_SCHEMA")
 # Tables to process
 TABLES = ["customers", "accounts", "transactions"]
 
-# Parallelism
-MAX_WORKERS = 4
+# Parallelism for uploading files
+MAX_WORKERS = 6
 
 # -----------------------------
 # Python Callables
 # -----------------------------
-
 def download_from_minio():
     """Download all files from MinIO for each table."""
     os.makedirs(LOCAL_DIR, exist_ok=True)
@@ -76,7 +75,7 @@ def upload_files_parallel(cur, table, files, max_workers=MAX_WORKERS):
 
 
 def load_to_snowflake(**kwargs):
-    """Load downloaded files into Snowflake, using parallel uploads."""
+    """Load downloaded files into Snowflake using parallel uploads."""
     local_files = kwargs["ti"].xcom_pull(task_ids="download_minio")
     if not local_files:
         print("No files found in MinIO.")
@@ -130,7 +129,7 @@ with DAG(
     dag_id="minio_to_snowflake_banking",
     default_args=default_args,
     description="Load MinIO parquet into Snowflake RAW tables with parallel uploads",
-    schedule_interval="*/1 * * * *",
+    schedule_interval="*/1 * * * *",  # Every minute
     start_date=datetime(2025, 1, 1),
     catchup=False,
 ) as dag:
@@ -138,12 +137,14 @@ with DAG(
     task1 = PythonOperator(
         task_id="download_minio",
         python_callable=download_from_minio,
+        execution_timeout=timedelta(minutes=30),  # Timeout for large files
     )
 
     task2 = PythonOperator(
         task_id="load_snowflake",
         python_callable=load_to_snowflake,
         provide_context=True,
+        execution_timeout=timedelta(minutes=60),  # Timeout for loading 100k+ records
     )
 
     task1 >> task2
