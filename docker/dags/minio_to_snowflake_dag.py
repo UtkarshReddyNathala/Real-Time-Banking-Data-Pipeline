@@ -5,8 +5,11 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
+from concurrent.futures import ThreadPoolExecutor
 
+# -----------------------------
 # Load environment variables
+# -----------------------------
 load_dotenv()
 
 # -------- MinIO Config --------
@@ -24,10 +27,18 @@ SNOWFLAKE_WAREHOUSE = os.getenv("SNOWFLAKE_WAREHOUSE")
 SNOWFLAKE_DB = os.getenv("SNOWFLAKE_DB")
 SNOWFLAKE_SCHEMA = os.getenv("SNOWFLAKE_SCHEMA")
 
+# Tables to process
 TABLES = ["customers", "accounts", "transactions"]
 
-# -------- Python Callables --------
+# Parallelism
+MAX_WORKERS = 4
+
+# -----------------------------
+# Python Callables
+# -----------------------------
+
 def download_from_minio():
+    """Download all files from MinIO for each table."""
     os.makedirs(LOCAL_DIR, exist_ok=True)
     s3 = boto3.client(
         "s3",
@@ -35,21 +46,37 @@ def download_from_minio():
         aws_access_key_id=MINIO_ACCESS_KEY,
         aws_secret_access_key=MINIO_SECRET_KEY
     )
+
     local_files = {}
+
     for table in TABLES:
         prefix = f"{table}/"
         resp = s3.list_objects_v2(Bucket=BUCKET, Prefix=prefix)
         objects = resp.get("Contents", [])
         local_files[table] = []
+
         for obj in objects:
             key = obj["Key"]
             local_file = os.path.join(LOCAL_DIR, os.path.basename(key))
             s3.download_file(BUCKET, key, local_file)
             print(f"Downloaded {key} -> {local_file}")
             local_files[table].append(local_file)
+
     return local_files
 
+
+def upload_files_parallel(cur, table, files, max_workers=MAX_WORKERS):
+    """Upload files to Snowflake in parallel."""
+    def upload(f):
+        cur.execute(f"PUT file://{f} @%{table}")
+        print(f"Uploaded {f} -> @{table} stage")
+
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        executor.map(upload, files)
+
+
 def load_to_snowflake(**kwargs):
+    """Load downloaded files into Snowflake, using parallel uploads."""
     local_files = kwargs["ti"].xcom_pull(task_ids="download_minio")
     if not local_files:
         print("No files found in MinIO.")
@@ -70,10 +97,14 @@ def load_to_snowflake(**kwargs):
             print(f"No files for {table}, skipping.")
             continue
 
-        for f in files:
-            cur.execute(f"PUT file://{f} @%{table}")
-            print(f"Uploaded {f} -> @{table} stage")
+        # -----------------------------
+        # Parallel upload
+        # -----------------------------
+        upload_files_parallel(cur, table, files)
 
+        # -----------------------------
+        # Copy into table
+        # -----------------------------
         copy_sql = f"""
         COPY INTO {table}
         FROM @%{table}
@@ -86,7 +117,9 @@ def load_to_snowflake(**kwargs):
     cur.close()
     conn.close()
 
-# -------- Airflow DAG --------
+# -----------------------------
+# Airflow DAG
+# -----------------------------
 default_args = {
     "owner": "airflow",
     "retries": 1,
@@ -96,7 +129,7 @@ default_args = {
 with DAG(
     dag_id="minio_to_snowflake_banking",
     default_args=default_args,
-    description="Load MinIO parquet into Snowflake RAW tables",
+    description="Load MinIO parquet into Snowflake RAW tables with parallel uploads",
     schedule_interval="*/1 * * * *",
     start_date=datetime(2025, 1, 1),
     catchup=False,
