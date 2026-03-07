@@ -12,6 +12,21 @@
 
 ---
 
+## Problems Solved
+
+- **Delayed analytics from OLTP systems:** Traditional databases are not designed for analytics. This pipeline separates transactional workloads from analytical processing using a cloud data warehouse.
+
+- **Lack of real-time data pipelines:** Implemented CDC-based streaming to capture live database changes instead of relying on slow batch ETL.
+
+- **Difficulty tracking historical data changes:** Solved using SCD Type-2 snapshots to maintain complete history of customer and account updates.
+
+- **Unstructured raw data not suitable for analytics:** Applied data modeling and transformations to convert raw streaming data into analytics-ready fact and dimension tables.
+
+- **Manual and unreliable data workflows:** Automated ingestion and transformation workflows using orchestration and CI/CD pipelines.
+
+ ---
+ 
+
 ## Project Overview
 
 ●Built a **real-time streaming** backend pipeline using **CDC, Apache Kafka, Kafka Connect, and Debezium** to capture live changes from **PostgreSQL database** and stream incremental data (**~100k records**) into an **S3-compatible object store (MinIO)**.
