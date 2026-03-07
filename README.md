@@ -14,13 +14,14 @@
 
 ## Project Overview
 
-• Built a real-time **streaming data pipeline** using **Change Data Capture (CDC)** with **Apache Kafka**, **Kafka Connect**, and **Debezium** to capture live changes from **PostgreSQL** and stream incremental data into an **S3-compatible data lake (MinIO)**.  
- 
-• Developed a **Snowflake** cloud data warehouse following **Medallion architecture (Bronze → Silver → Gold)**, implementing **dbt** staging models, fact and dimension tables in a **star schema data model**, **incremental transformations**, and Slowly Changing Dimensions **(SCD Type-2) for historical tracking**.
+●Built a **real-time streaming** backend pipeline using **CDC, Apache Kafka, Kafka Connect, and Debezium** to capture live changes from **PostgreSQL database** and stream incremental data (**~100k records**) into an **S3-compatible object store (MinIO)**.
 
-• Orchestrated end-to-end data workflows using **Apache Airflow** and containerized services with **Docker** to ensure reliable and reproducible pipeline execution.
+●Developed a **Snowflake cloud data warehouse** with **Medallion architecture (Bronze → Silver → Gold)**, implementing **DBT staging models**, fact and dimension tables in a **star schema**, including **incremental transformations** and **SCD Type-2 snapshots** for historical tracking.
 
-• Implemented automated **CI/CD pipelines** using **GitHub Actions** for code validation, **dbt compile checks**, and automated **dbt run and test deployments** to **Snowflake**, and built **Power BI dashboards** for business reporting.
+●Orchestrated end-to-end workflows using **Apache Airflow** and **Docker**, ensuring **reliable, reproducible execution**, with optimizations for **large-scale synthetic datasets** via **batch inserts**, **parallel uploads**, **extended DAG timeouts**, and **incremental DBT models**.
+
+●Implemented automated **CI/CD pipelines using GitHub Actions** for **code validation**, **DBT compile checks**, and **automated DBT runs**, and built **Power BI dashboards** for **business reporting and insights**.
+
 
 ---
 
