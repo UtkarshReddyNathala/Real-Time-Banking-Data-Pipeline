@@ -55,7 +55,7 @@ def run_iteration():
     accounts_list = []
     transactions_list = []
 
-    # 1️⃣ Generate customers
+    # 1️.Generate customers
     for _ in range(NUM_CUSTOMERS):
         first_name = fake.first_name()
         last_name = fake.last_name()
@@ -69,7 +69,7 @@ def run_iteration():
     )
     customer_ids = [cur.fetchone()[0] for _ in range(NUM_CUSTOMERS)]
 
-    # 2️⃣ Generate accounts
+    # 2️.Generate accounts
     for customer_id in customer_ids:
         for _ in range(ACCOUNTS_PER_CUSTOMER):
             account_type = random.choice(["SAVINGS", "CHECKING"])
@@ -100,7 +100,7 @@ def run_iteration():
         transactions_list
     )
 
-    print(f"✅ Generated {NUM_CUSTOMERS} customers, {len(accounts_list)} accounts, {len(transactions_list)} transactions.")
+    print(f"Generated {NUM_CUSTOMERS} customers, {len(accounts_list)} accounts, {len(transactions_list)} transactions.")
 
 # -----------------------------
 # Main loop
