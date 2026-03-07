@@ -12,6 +12,18 @@
 
 ---
 
+## Project Overview
+ 
+●Built a **real-time streaming** backend pipeline using **CDC, Apache Kafka, Kafka Connect, and Debezium** to capture live changes from **PostgreSQL database** and stream incremental data (**~100k records**) into an **S3-compatible object store (MinIO)**.
+
+●Developed a **Snowflake cloud data warehouse** with **Medallion architecture (Bronze → Silver → Gold)**, implementing **DBT staging models**, fact and dimension tables in a **star schema**, including **incremental transformations** and **SCD Type-2 snapshots** for historical tracking.
+
+●Orchestrated end-to-end workflows using **Apache Airflow** and **Docker**, ensuring **reliable, reproducible execution**, with optimizations for **large-scale synthetic datasets** via **batch inserts**, **parallel uploads**, **extended DAG timeouts**, and **incremental DBT models**.
+
+●Implemented automated **CI/CD pipelines using GitHub Actions** for **code validation**, **DBT compile checks**, and **automated DBT runs**, and built **Power BI dashboards** for **business reporting and insights**.
+
+---
+
 ## Problems Solved
 
 - **Delayed analytics from OLTP systems:** Traditional databases are not designed for analytics. This pipeline separates transactional workloads from analytical processing using a cloud data warehouse.
@@ -23,21 +35,7 @@
 - **Unstructured raw data not suitable for analytics:** Applied data modeling and transformations to convert raw streaming data into analytics-ready fact and dimension tables.
 
 - **Manual and unreliable data workflows:** Automated ingestion and transformation workflows using orchestration and CI/CD pipelines.
-
- ---
- 
-
-## Project Overview
-
-●Built a **real-time streaming** backend pipeline using **CDC, Apache Kafka, Kafka Connect, and Debezium** to capture live changes from **PostgreSQL database** and stream incremental data (**~100k records**) into an **S3-compatible object store (MinIO)**.
-
-●Developed a **Snowflake cloud data warehouse** with **Medallion architecture (Bronze → Silver → Gold)**, implementing **DBT staging models**, fact and dimension tables in a **star schema**, including **incremental transformations** and **SCD Type-2 snapshots** for historical tracking.
-
-●Orchestrated end-to-end workflows using **Apache Airflow** and **Docker**, ensuring **reliable, reproducible execution**, with optimizations for **large-scale synthetic datasets** via **batch inserts**, **parallel uploads**, **extended DAG timeouts**, and **incremental DBT models**.
-
-●Implemented automated **CI/CD pipelines using GitHub Actions** for **code validation**, **DBT compile checks**, and **automated DBT runs**, and built **Power BI dashboards** for **business reporting and insights**.
-
-
+  
 ---
 
 ## Architecture  
