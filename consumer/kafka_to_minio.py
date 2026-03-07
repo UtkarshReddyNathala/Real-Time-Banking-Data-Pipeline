@@ -48,7 +48,7 @@ def write_to_minio(table_name, records):
     s3_key = f'{table_name}/date={date_str}/{table_name}_{datetime.now().strftime("%H%M%S%f")}.parquet'
     s3.upload_file(file_path, bucket, s3_key)
     os.remove(file_path)
-    print(f'✅ Uploaded {len(records)} records to s3://{bucket}/{s3_key}')
+    print(f'Uploaded {len(records)} records to s3://{bucket}/{s3_key}')
 
 # Batch consume
 batch_size = 5000
@@ -58,7 +58,7 @@ buffer = {
     'banking_server.public.transactions': []
 }
 
-print("✅ Connected to Kafka. Listening for messages...")
+print("Connected to Kafka. Listening for messages...")
 
 for message in consumer:
     topic = message.topic
